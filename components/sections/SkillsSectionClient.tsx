@@ -1,28 +1,25 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useInView } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
-import { supabase, Skill } from '@/lib/supabase';
+import { useRef } from 'react';
 
-export function SkillsSection() {
+export type Skill = {
+  _id: string;
+  name: string;
+  category: string;
+  proficiency: number;
+  display_order: number;
+};
+
+export default function SkillsSectionClient({
+  skills,
+}: {
+  skills: Skill[];
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [skills, setSkills] = useState<Skill[]>([]);
-
-  useEffect(() => {
-    fetchSkills();
-  }, []);
-
-  const fetchSkills = async () => {
-    const { data } = await supabase
-      .from('skills')
-      .select('*')
-      .order('display_order');
-    if (data) setSkills(data);
-  };
 
   const categories = [
     { name: 'Frontend', color: 'from-blue-500 to-cyan-500' },
@@ -44,7 +41,7 @@ export function SkillsSection() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
@@ -83,7 +80,7 @@ export function SkillsSection() {
                   <div className="space-y-4">
                     {categorySkills.map((skill, skillIndex) => (
                       <motion.div
-                        key={skill.id}
+                        key={skill._id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                         transition={{
@@ -97,6 +94,7 @@ export function SkillsSection() {
                             {skill.proficiency}%
                           </span>
                         </div>
+
                         <div className="h-2 bg-secondary rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
@@ -108,7 +106,6 @@ export function SkillsSection() {
                             transition={{
                               duration: 1,
                               delay: index * 0.1 + skillIndex * 0.05,
-                              ease: 'easeOut',
                             }}
                             className={`h-full bg-gradient-to-r ${category.color}`}
                           />
@@ -131,7 +128,7 @@ export function SkillsSection() {
           <div className="flex flex-wrap justify-center gap-3">
             {skills.slice(0, 10).map((skill) => (
               <Badge
-                key={skill.id}
+                key={skill._id}
                 variant="secondary"
                 className="px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors cursor-pointer"
               >

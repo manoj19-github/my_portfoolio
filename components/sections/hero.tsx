@@ -152,7 +152,7 @@ function CodeWindow({ isDark }: { isDark: boolean }) {
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute right-10 top-1/2 -translate-y-1/2 hidden xl:block"
+      className="absolute right-[160px] top-[35%] -translate-y-1/2 hidden xl:block"
     >
       <div style={{
         width: 340,
@@ -497,7 +497,7 @@ export function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-blue-600 dark:text-blue-400 font-medium mb-4"
+            className="text-blue-600 dark:text-blue-400 font-medium mb-4 mt-8"
           >
             Hi, I&apos;m
           </motion.p>
@@ -563,7 +563,7 @@ export function HeroSection() {
 
           {/* Typing role */}
           <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.52 }}
-            className="flex items-center justify-center xl:justify-start gap-3 mb-6">
+            className="flex items-center justify-center xl:justify-start gap-3 mb-6 mt-10">
             <div className="h-px w-8" style={{ background:`linear-gradient(90deg,${tk.accent},transparent)` }} />
             <span className="hero-mono text-base sm:text-xl font-medium" style={{ color:tk.roleColor }}>
               {typedRole}
@@ -616,23 +616,14 @@ export function HeroSection() {
 
           {/* Stats */}
           <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.85 }}
-            className="grid grid-cols-3 gap-3 max-w-sm mx-auto xl:mx-0">
+            className="grid grid-cols-3 gap-10 w-full xl:mx-0 mt-32 mb-20">
             <StatCard value="4+"   label="Yrs Exp"  icon={Zap}       color={tk.stat1} delay={0.9}  isDark={isDark} />
             <StatCard value="50K+" label="Users"    icon={Globe}     color={tk.stat2} delay={1.0}  isDark={isDark} />
             <StatCard value="15+"  label="Projects" icon={GitBranch} color={tk.stat3} delay={1.1}  isDark={isDark} />
           </motion.div>
 
           {/* Tech pills */}
-          <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:1.2 }}
-            className="flex flex-wrap gap-2 mt-8 justify-center xl:justify-start">
-            {['React','Node.js','TypeScript','MongoDB','Next.js','React Native'].map((tech,i) => (
-              <motion.span key={tech} initial={{ opacity:0,y:6 }} animate={{ opacity:1,y:0 }} transition={{ delay:1.2+i*.07 }}
-                className="tech-pill"
-                style={{ background:tk.pillBg, border:`1px solid ${tk.pillBorder}`, color:tk.pillColor, backdropFilter:'blur(8px)' }}>
-                {tech}
-              </motion.span>
-            ))}
-          </motion.div>
+         
         </div>
 
         {/* Scroll indicator */}

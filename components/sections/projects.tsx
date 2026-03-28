@@ -23,6 +23,7 @@ export function ProjectsSection() {
       .from('projects')
       .select('*')
       .order('display_order');
+      
     if (data) setProjects(data);
   };
 

@@ -5,11 +5,25 @@ import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSp
 import { useTheme } from 'next-themes';
 import { Moon, Sun, Menu, X } from 'lucide-react';
 
+// Inline SVG icons — no extra dependencies needed
+const GitHubIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+  </svg>
+);
+
+const LinkedInIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+  </svg>
+);
+
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Home');
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const navRef = useRef<HTMLDivElement>(null);
@@ -38,6 +52,12 @@ export function Navigation() {
     { name: 'Contact',  href: '#contact',  number: '05' },
   ];
 
+  // 🔗 Replace with your real profile URLs
+  const socialLinks = {
+    github:   'https://github.com/manoj19-github',
+    linkedin: 'https://www.linkedin.com/in/manoj-santra-38ab181ba/',
+  };
+
   const scrollToSection = (href: string, name: string) => {
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
     setIsMobileMenuOpen(false);
@@ -45,54 +65,110 @@ export function Navigation() {
   };
 
   // ── Design tokens per theme ────────────────────────────────────────────────
-  const tk = {
-    navBg:         isDark ? 'rgba(5,5,10,0.88)'         : 'rgba(248,250,255,0.9)',
-    navBorder:     isDark ? 'rgba(255,255,255,0.05)'     : 'rgba(79,70,229,0.1)',
-    topBar:        isDark
-      ? 'linear-gradient(90deg,transparent,#e2ff5d,#00e5ff,#ff6b9d,transparent)'
-      : 'linear-gradient(90deg,transparent,#4f46e5,#0284c7,#059669,transparent)',
-    scanline:      isDark ? 'rgba(255,255,255,0.15)'     : 'rgba(79,70,229,0.07)',
-    // logo
-    logoBorder:    isDark ? 'rgba(255,255,255,0.1)'      : 'rgba(79,70,229,0.18)',
-    logoBg:        isDark ? 'rgba(255,255,255,0.03)'     : 'rgba(79,70,229,0.04)',
-    logoRing:      isDark ? '#e2ff5d44'                  : '#4f46e544',
-    logoDot:       isDark ? '#e2ff5d'                    : '#4f46e5',
-    logoDotShadow: isDark ? '0 0 6px 2px #e2ff5d88'     : '0 0 6px 2px #4f46e566',
-    logoGrad:      isDark
-      ? 'linear-gradient(135deg,#e2ff5d 0%,#00e5ff 50%,#ff6b9d 100%)'
-      : 'linear-gradient(135deg,#1e1b4b 0%,#4f46e5 40%,#0284c7 70%,#059669 100%)',
-    logoVer:       isDark ? 'rgba(255,255,255,0.18)'     : 'rgba(30,30,80,0.28)',
-    // items
-    numDefault:    isDark ? 'rgba(255,255,255,0.2)'      : 'rgba(30,30,80,0.3)',
-    numHover:      isDark ? 'rgba(226,255,93,0.45)'      : 'rgba(79,70,229,0.55)',
-    labelDefault:  isDark ? 'rgba(255,255,255,0.55)'     : 'rgba(30,30,80,0.55)',
-    labelActive:   isDark ? '#e2ff5d'                    : '#4f46e5',
-    hoverBg:       isDark ? 'rgba(226,255,93,0.05)'      : 'rgba(79,70,229,0.05)',
-    hoverBd:       isDark ? 'rgba(226,255,93,0.12)'      : 'rgba(79,70,229,0.14)',
-    underline:     isDark
-      ? 'linear-gradient(90deg,#e2ff5d,#00e5ff)'
-      : 'linear-gradient(90deg,#4f46e5,#0284c7)',
-    activeDot:     isDark ? '#e2ff5d'                    : '#4f46e5',
-    activeShadow:  isDark ? '0 0 6px 2px #e2ff5d88'     : '0 0 6px 2px #4f46e566',
-    divider:       isDark ? 'rgba(255,255,255,0.1)'      : 'rgba(30,30,80,0.1)',
-    // controls
-    ctrlBorder:    isDark ? 'rgba(255,255,255,0.1)'      : 'rgba(30,30,80,0.1)',
-    ctrlBg:        isDark ? 'rgba(255,255,255,0.03)'     : 'rgba(30,30,80,0.03)',
-    ctrlColor:     isDark ? 'rgba(255,255,255,0.5)'      : 'rgba(30,30,80,0.5)',
-    // CTA
-    ctaBg:         isDark ? '#e2ff5d'                    : 'linear-gradient(135deg,#4f46e5,#7c3aed)',
-    ctaColor:      isDark ? '#050510'                    : '#ffffff',
-    ctaShadow:     isDark ? 'none'                       : '0 4px 16px rgba(79,70,229,0.35)',
-    // mobile
-    mobileBg:      isDark ? 'rgba(5,5,10,0.97)'          : 'rgba(248,250,255,0.97)',
-    mobileBd:      isDark ? 'rgba(255,255,255,0.06)'     : 'rgba(79,70,229,0.08)',
-    mobileGrid:    isDark ? 'rgba(255,255,255,0.4)'      : 'rgba(79,70,229,0.35)',
-    mobileNum:     isDark ? 'rgba(255,255,255,0.2)'      : 'rgba(30,30,80,0.28)',
-    mobileLabelD:  isDark ? 'rgba(255,255,255,0.65)'     : 'rgba(30,30,80,0.6)',
-    mobileLabelA:  isDark ? '#e2ff5d'                    : '#4f46e5',
-    mobileDash:    isDark ? 'rgba(255,255,255,0.18)'     : 'rgba(30,30,80,0.14)',
-    mobileCtaBg:   isDark ? '#e2ff5d'                    : 'linear-gradient(135deg,#4f46e5,#7c3aed)',
-    mobileCtaC:    isDark ? '#050510'                    : '#ffffff',
+  const tk = isDark ? {
+    navBg:              'rgba(5,5,10,0.88)',
+    navBorder:          'rgba(255,255,255,0.05)',
+    topBar:             'linear-gradient(90deg,transparent,#e2ff5d,#00e5ff,#ff6b9d,transparent)',
+    scanline:           'rgba(255,255,255,0.15)',
+    logoBorder:         'rgba(255,255,255,0.1)',
+    logoBg:             'rgba(255,255,255,0.03)',
+    logoRing:           '#e2ff5d44',
+    logoDot:            '#e2ff5d',
+    logoDotShadow:      '0 0 6px 2px #e2ff5d88',
+    logoGrad:           'linear-gradient(135deg,#e2ff5d 0%,#00e5ff 50%,#ff6b9d 100%)',
+    logoVer:            'rgba(255,255,255,0.18)',
+    numDefault:         'rgba(255,255,255,0.2)',
+    numHover:           'rgba(226,255,93,0.45)',
+    labelDefault:       'rgba(255,255,255,0.55)',
+    labelActive:        '#e2ff5d',
+    hoverBg:            'rgba(226,255,93,0.05)',
+    hoverBd:            'rgba(226,255,93,0.12)',
+    underline:          'linear-gradient(90deg,#e2ff5d,#00e5ff)',
+    activeDot:          '#e2ff5d',
+    activeShadow:       '0 0 6px 2px #e2ff5d88',
+    divider:            'rgba(255,255,255,0.1)',
+    ctrlBorder:         'rgba(255,255,255,0.1)',
+    ctrlBg:             'rgba(255,255,255,0.03)',
+    ctrlColor:          'rgba(255,255,255,0.5)',
+    // social
+    socialBorder:       'rgba(255,255,255,0.1)',
+    socialBg:           'rgba(255,255,255,0.03)',
+    socialColor:        'rgba(255,255,255,0.4)',
+    ghHoverBorder:      'rgba(226,255,93,0.3)',
+    ghHoverBg:          'rgba(226,255,93,0.07)',
+    ghHoverColor:       '#e2ff5d',
+    ghHoverShadow:      '0 0 12px rgba(226,255,93,0.2)',
+    liHoverBorder:      'rgba(0,229,255,0.3)',
+    liHoverBg:          'rgba(0,229,255,0.07)',
+    liHoverColor:       '#00e5ff',
+    liHoverShadow:      '0 0 12px rgba(0,229,255,0.2)',
+    ctaBg:              '#e2ff5d',
+    ctaColor:           '#050510',
+    ctaShadow:          'none',
+    mobileBg:           'rgba(5,5,10,0.97)',
+    mobileBd:           'rgba(255,255,255,0.06)',
+    mobileGrid:         'rgba(255,255,255,0.4)',
+    mobileNum:          'rgba(255,255,255,0.2)',
+    mobileLabelD:       'rgba(255,255,255,0.65)',
+    mobileLabelA:       '#e2ff5d',
+    mobileDash:         'rgba(255,255,255,0.18)',
+    mobileSocialBorder: 'rgba(255,255,255,0.1)',
+    mobileSocialBg:     'rgba(255,255,255,0.04)',
+    mobileSocialColor:  'rgba(255,255,255,0.5)',
+    mobileCtaBg:        '#e2ff5d',
+    mobileCtaC:         '#050510',
+  } : {
+    navBg:              'rgba(255,255,255,0.92)',
+    navBorder:          'rgba(79,70,229,0.15)',
+    topBar:             'linear-gradient(90deg,transparent,#4f46e5,#7c3aed,#0284c7,transparent)',
+    scanline:           'rgba(79,70,229,0.08)',
+    logoBorder:         'rgba(79,70,229,0.35)',
+    logoBg:             'rgba(79,70,229,0.07)',
+    logoRing:           'rgba(79,70,229,0.25)',
+    logoDot:            '#4f46e5',
+    logoDotShadow:      '0 0 6px 2px rgba(79,70,229,0.45)',
+    logoGrad:           'linear-gradient(135deg,#1e1b4b 0%,#4f46e5 45%,#7c3aed 75%,#0284c7 100%)',
+    logoVer:            'rgba(30,27,75,0.45)',
+    numDefault:         'rgba(30,27,75,0.4)',
+    numHover:           '#4f46e5',
+    labelDefault:       'rgba(30,27,75,0.7)',
+    labelActive:        '#4f46e5',
+    hoverBg:            'rgba(79,70,229,0.07)',
+    hoverBd:            'rgba(79,70,229,0.2)',
+    underline:          'linear-gradient(90deg,#4f46e5,#7c3aed)',
+    activeDot:          '#4f46e5',
+    activeShadow:       '0 0 6px 2px rgba(79,70,229,0.45)',
+    divider:            'rgba(30,27,75,0.12)',
+    ctrlBorder:         'rgba(79,70,229,0.25)',
+    ctrlBg:             'rgba(79,70,229,0.06)',
+    ctrlColor:          '#4f46e5',
+    // social
+    socialBorder:       'rgba(79,70,229,0.22)',
+    socialBg:           'rgba(79,70,229,0.05)',
+    socialColor:        'rgba(30,27,75,0.45)',
+    ghHoverBorder:      'rgba(30,27,75,0.4)',
+    ghHoverBg:          'rgba(30,27,75,0.07)',
+    ghHoverColor:       '#1e1b4b',
+    ghHoverShadow:      '0 0 12px rgba(30,27,75,0.15)',
+    liHoverBorder:      'rgba(2,132,199,0.35)',
+    liHoverBg:          'rgba(2,132,199,0.07)',
+    liHoverColor:       '#0284c7',
+    liHoverShadow:      '0 0 12px rgba(2,132,199,0.2)',
+    ctaBg:              'linear-gradient(135deg,#4f46e5,#7c3aed)',
+    ctaColor:           '#ffffff',
+    ctaShadow:          '0 4px 18px rgba(79,70,229,0.4)',
+    mobileBg:           'rgba(255,255,255,0.98)',
+    mobileBd:           'rgba(79,70,229,0.12)',
+    mobileGrid:         'rgba(79,70,229,0.5)',
+    mobileNum:          'rgba(30,27,75,0.35)',
+    mobileLabelD:       'rgba(30,27,75,0.7)',
+    mobileLabelA:       '#4f46e5',
+    mobileDash:         'rgba(79,70,229,0.2)',
+    mobileSocialBorder: 'rgba(79,70,229,0.22)',
+    mobileSocialBg:     'rgba(79,70,229,0.05)',
+    mobileSocialColor:  'rgba(30,27,75,0.55)',
+    mobileCtaBg:        'linear-gradient(135deg,#4f46e5,#7c3aed)',
+    mobileCtaC:         '#ffffff',
   };
 
   return (
@@ -146,6 +222,7 @@ export function Navigation() {
             opacity: navOpacity,
             background: tk.navBg,
             backdropFilter: 'blur(18px)',
+            WebkitBackdropFilter: 'blur(18px)',
             borderBottom: `1px solid ${tk.navBorder}`,
           }}
         />
@@ -171,31 +248,13 @@ export function Navigation() {
           <div className="flex items-center justify-between h-[72px]">
 
             {/* Logo */}
-            <motion.div
-              style={{ x: springX, y: springY }}
-              onMouseMove={e => {
-                const r = e.currentTarget.getBoundingClientRect();
-                logoX.set((e.clientX - r.left - r.width / 2) * 0.3);
-                logoY.set((e.clientY - r.top - r.height / 2) * 0.3);
-              }}
-              onMouseLeave={() => { logoX.set(0); logoY.set(0); }}
-              whileTap={{ scale: 0.92 }}
-              className="relative cursor-pointer select-none"
-            >
-              <div className="absolute inset-0 rounded-sm" style={{
-                animation: 'pulseRing 2.5s ease-out infinite',
-                border: `1px solid ${tk.logoRing}`,
-              }} />
-              <div className="relative flex items-center gap-2 px-3 py-1.5 rounded-sm"
-                style={{ border: `1px solid ${tk.logoBorder}`, background: tk.logoBg }}>
-                <div className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: tk.logoDot, boxShadow: tk.logoDotShadow }} />
-                <span className="logo-shimmer text-xl font-extrabold tracking-widest"
-                  style={{ background: tk.logoGrad }}>MS</span>
-                <span className="mono-font text-[9px] tracking-wider self-end mb-0.5"
-                  style={{ color: tk.logoVer }}>v2.0</span>
-              </div>
-            </motion.div>
+         <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"
+          >
+            MS
+          </motion.div>
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-1">
@@ -210,7 +269,6 @@ export function Navigation() {
                   onClick={() => scrollToSection(item.href, item.name)}
                   className="nav-ul relative px-4 py-2 group"
                 >
-                  {/* Dynamic underline colour */}
                   <style>{`.nav-ul::before{background:${tk.underline}}`}</style>
 
                   <AnimatePresence>
@@ -250,11 +308,61 @@ export function Navigation() {
 
               <div className="w-px h-6 mx-2" style={{ background: tk.divider }} />
 
+              {/* ── GitHub button ── */}
+              <motion.a
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.9 }}
+                onHoverStart={() => setHoveredSocial('github')}
+                onHoverEnd={() => setHoveredSocial(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-sm transition-all duration-200 cursor-pointer"
+                style={{
+                  border: `1px solid ${hoveredSocial === 'github' ? tk.ghHoverBorder : tk.socialBorder}`,
+                  background: hoveredSocial === 'github' ? tk.ghHoverBg : tk.socialBg,
+                  color:      hoveredSocial === 'github' ? tk.ghHoverColor : tk.socialColor,
+                  boxShadow:  hoveredSocial === 'github' ? tk.ghHoverShadow : 'none',
+                }}
+              >
+                <GitHubIcon size={15} />
+              </motion.a>
+
+              {/* ── LinkedIn button ── */}
+              <motion.a
+                href={socialLinks.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.9 }}
+                onHoverStart={() => setHoveredSocial('linkedin')}
+                onHoverEnd={() => setHoveredSocial(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-sm transition-all duration-200 cursor-pointer"
+                style={{
+                  border: `1px solid ${hoveredSocial === 'linkedin' ? tk.liHoverBorder : tk.socialBorder}`,
+                  background: hoveredSocial === 'linkedin' ? tk.liHoverBg : tk.socialBg,
+                  color:      hoveredSocial === 'linkedin' ? tk.liHoverColor : tk.socialColor,
+                  boxShadow:  hoveredSocial === 'linkedin' ? tk.liHoverShadow : 'none',
+                }}
+              >
+                <LinkedInIcon size={15} />
+              </motion.a>
+
+              <div className="w-px h-6 mx-2" style={{ background: tk.divider }} />
+
               {/* Theme toggle */}
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.65 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -278,7 +386,7 @@ export function Navigation() {
               <motion.button
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => scrollToSection('#contact', 'Contact')}
@@ -359,7 +467,44 @@ export function Navigation() {
                   </motion.button>
                 ))}
 
-                <motion.div initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.35 }} className="pt-4">
+                {/* Mobile social row */}
+                <motion.div
+                  initial={{ opacity:0, y:8 }}
+                  animate={{ opacity:1, y:0 }}
+                  transition={{ delay:0.3 }}
+                  className="flex items-center gap-3 px-3 pt-4 pb-1"
+                >
+                  <a
+                    href={socialLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 flex-1 py-2.5 rounded-sm transition-all duration-200"
+                    style={{
+                      border: `1px solid ${tk.mobileSocialBorder}`,
+                      background: tk.mobileSocialBg,
+                      color: tk.mobileSocialColor,
+                    }}
+                  >
+                    <GitHubIcon size={14} />
+                    <span className="mono-font text-[10px] tracking-widest font-medium">GITHUB</span>
+                  </a>
+                  <a
+                    href={socialLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 flex-1 py-2.5 rounded-sm transition-all duration-200"
+                    style={{
+                      border: `1px solid ${tk.mobileSocialBorder}`,
+                      background: tk.mobileSocialBg,
+                      color: tk.mobileSocialColor,
+                    }}
+                  >
+                    <LinkedInIcon size={14} />
+                    <span className="mono-font text-[10px] tracking-widest font-medium">LINKEDIN</span>
+                  </a>
+                </motion.div>
+
+                <motion.div initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.38 }} className="pt-3">
                   <button
                     onClick={() => scrollToSection('#contact','Contact')}
                     className="mono-font w-full py-3 text-[11px] tracking-widest font-bold rounded-sm"
