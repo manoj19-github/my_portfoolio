@@ -10,9 +10,16 @@ import { useTheme } from 'next-themes';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
+import { GlobalWorkerOptions } from 'pdfjs-dist';
 /* ─── Config — edit these ─────────────────────────────────────────────────── */
 const RESUME_PDF_URL  = '/santra-manoj-2026-resume.pdf';
 const RESUME_FILENAME = 'Manoj-Santra-Resume-2026.pdf';
+
+
+
+// Set once at the top of your file or in a useEffect
+GlobalWorkerOptions.workerSrc =
+  'https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js';
 
 const PROFILE = {
   name:     'Manoj Santra',
@@ -176,13 +183,13 @@ function PdfPanel({ isDark }: { isDark: boolean }) {
         className={`rs-pdf-wrap${isDark ? ' rs-pdf-dark' : ''}`}
         style={{ flex: 1, overflow: 'hidden', position: 'relative' }}
       >
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-          <Viewer
-            fileUrl={RESUME_PDF_URL}
-            plugins={[pluginInstance]}
-            defaultScale={isSmall ? 0.9 : 0.9}
-          />
-        </Worker>
+<div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+  <Viewer
+    fileUrl={RESUME_PDF_URL}
+    plugins={[pluginInstance]}
+    defaultScale={0.9}
+  />
+</div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download,X as CloseIcon } from 'lucide-react';
+import { Download, X as CloseIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
@@ -9,6 +9,13 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
+
+
+import { GlobalWorkerOptions } from 'pdfjs-dist';
+
+// Set once at the top of your file or in a useEffect
+GlobalWorkerOptions.workerSrc =
+  'https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js';
 // ─── PDF Modal ────────────────────────────────────────────────────────────────
 interface PdfModalProps {
   isOpen: boolean;
@@ -238,7 +245,15 @@ const PdfModal: React.FC<PdfModalProps> = ({ isOpen, onClose, pdfUrl, fileName }
                     [&_.rpv-core\_\_page-layer]:overflow-hidden
                   "
                 >
-                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
+
+                  <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                    <Viewer
+                      fileUrl={pdfUrl}
+                      plugins={[defaultLayoutPluginInstance]}
+                      defaultScale={isSmallScreen ? 0.75 : 1.0}
+                    />
+                  </div>
+                  {/* <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
                     {pdfUrl && (
                       <Viewer
                         fileUrl={pdfUrl}
@@ -246,7 +261,7 @@ const PdfModal: React.FC<PdfModalProps> = ({ isOpen, onClose, pdfUrl, fileName }
                         defaultScale={isSmallScreen ? 0.75 : 1.0}
                       />
                     )}
-                  </Worker>
+                  </Worker> */}
                 </div>
               </motion.div>
 
